@@ -5,7 +5,7 @@ from airflow.operators.python_operator import PythonOperator
 import pandas as pd
 import pickle
 
-from classification_projects.titanic_challenge.src.nodes import create_dataset, drop_unnecessary_columns, fill_empty_age_values, fill_empty_embarked_values, \
+from classification_projects.classification_projects.titanic_challenge.src.nodes import create_dataset, drop_unnecessary_columns, fill_empty_age_values, fill_empty_embarked_values, \
     encode_embarked_ports, create_deck_feature, encode_age_ranges, create_title_feature, encode_title_feature, \
     encode_sex, encode_fare, create_age_class_feature, create_relatives_feature, split_dataset_for_training, \
     create_and_train_decision_tree_model, compute_accuracy, fill_empty_fare_values
@@ -110,7 +110,7 @@ dag = DAG(
 create_preprocessing = PythonOperator(dag=dag, 
     task_id='create_preprocessing', 
     python_callable=create_preprocessing_pipeline, 
-    op_kwargs={"dataset_path": "/opt/airflow/classification_projects/titanic_challenge/data/train.csv", "drop_passenger_id": True},
+    op_kwargs={"dataset_path": "/opt/airflow/classification_projects/classification_projects/titanic_challenge/data/train.csv", "drop_passenger_id": True},
     provide_context=True
 )
 
@@ -134,7 +134,7 @@ prepare_submission = PythonOperator(
     dag=dag, 
     task_id='prepare_submission_pipeline', 
     python_callable=prepare_submission,
-    op_kwargs={'test_df_path': '/opt/airflow/classification_projects/titanic_challenge/data/test.csv', 'clean_df_path': '/tmp/clean.csv', 'feature_df_path': '/tmp/feature.csv', 'submission_file_path': '/tmp/submission.csv'}
+    op_kwargs={'test_df_path': '/opt/airflow/classification_projects/classification_projects/titanic_challenge/data/test.csv', 'clean_df_path': '/tmp/clean.csv', 'feature_df_path': '/tmp/feature.csv', 'submission_file_path': '/tmp/submission.csv'}
 )
 
 create_preprocessing >> create_feature_engineering >> create_ml >> prepare_submission
