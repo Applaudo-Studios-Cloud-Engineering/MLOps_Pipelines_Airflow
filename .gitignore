@@ -187,4 +187,4 @@ fabric.properties
  # Kaggle submission files
  **/submission.csv
 
- logs/*
+logs/*
