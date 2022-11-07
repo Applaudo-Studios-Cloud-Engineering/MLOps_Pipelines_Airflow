@@ -187,4 +187,8 @@ fabric.properties
  # Kaggle submission files
  **/submission.csv
 
+# Airflow specific folders
 logs/*
+
+# Cache
+**__pycache__*
