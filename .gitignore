@@ -184,11 +184,8 @@ fabric.properties
 # idea folder, uncomment if you don't need it
  .idea
 
- # Kaggle submission files
- **/submission.csv
+# Kaggle submission files
+**/submission.csv
 
 # Airflow specific folders
 logs/*
-
-# Cache
-**__pycache__*
