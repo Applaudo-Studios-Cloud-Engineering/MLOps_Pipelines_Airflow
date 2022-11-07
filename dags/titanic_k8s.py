@@ -21,7 +21,7 @@ dag = DAG(
 create_preprocessing = PythonOperator(dag=dag, 
     task_id='create_preprocessing', 
     python_callable=create_preprocessing_pipeline, 
-    op_kwargs={"dataset_path": "/opt/airflow/dags/repo/submodule/classification_projects/titanic_challenge/data/train.csv", "drop_passenger_id": True},
+    op_kwargs={"dataset_path": "/opt/airflow/dags/repo/submodules/classification_projects/titanic_challenge/data/train.csv", "drop_passenger_id": True},
     provide_context=True
 )
 
@@ -45,7 +45,7 @@ prepare_submission = PythonOperator(
     dag=dag, 
     task_id='prepare_submission_pipeline', 
     python_callable=prepare_submission,
-    op_kwargs={'test_df_path': '/opt/airflow/dags/repo/submodule/classification_projects/titanic_challenge/data/test.csv', 'clean_df_path': '/tmp/clean.csv', 'feature_df_path': '/tmp/feature.csv', 'submission_file_path': '/tmp/submission.csv'}
+    op_kwargs={'test_df_path': '/opt/airflow/dags/repo/submodules/classification_projects/titanic_challenge/data/test.csv', 'clean_df_path': '/tmp/clean.csv', 'feature_df_path': '/tmp/feature.csv', 'submission_file_path': '/tmp/submission.csv'}
 )
 
 create_preprocessing >> create_feature_engineering >> create_ml >> prepare_submission
