@@ -1,6 +1,7 @@
 from pipelines.titanic import create_preprocessing_pipeline, create_ml_pipeline, create_feature_engineering_pipeline, prepare_submission
 from airflow import DAG
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
+from airflow.kubernetes.secret import Secret
 from datetime import timedelta, datetime
 
 
@@ -18,6 +19,9 @@ resource_config = {
         "limit_cpu": "200m"
     }
 }
+
+secret_env = Secret('env', 'SECRET-KEY', 'minio', 'SECRET-KEY')
+secret_env = Secret('env', 'ACCESS-KEY', 'minio', 'ACCESS-KEY')
 
 
 dag = DAG(

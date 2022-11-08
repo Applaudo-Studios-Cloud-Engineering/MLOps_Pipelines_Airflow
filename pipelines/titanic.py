@@ -1,6 +1,8 @@
 from multiprocessing.spawn import prepare
 import pandas as pd
+from minio import Minio
 import pickle
+import os
 
 from submodules.classification_projects.titanic_challenge.src.nodes import create_dataset, drop_unnecessary_columns, fill_empty_age_values, fill_empty_embarked_values, \
     encode_embarked_ports, create_deck_feature, encode_age_ranges, create_title_feature, encode_title_feature, \
@@ -22,6 +24,14 @@ def create_preprocessing_pipeline(dataset_path: str, drop_passenger_id: bool=Fal
     df = fill_empty_fare_values(df)
 
     df.to_csv('/tmp/clean.csv')
+
+    LOCAL_FILE_PATH = os.environ.get('/tmp/clean.csv')
+    ACCESS_KEY = os.environ.get('ACCESS_KEY')
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+
+    MINIO_API_HOST = "http://localhost:9000"
+    MINIO_CLIENT = Minio("localhost:9000", access_key=ACCESS_KEY, secret_key=SECRET_KEY, secure=False)
+    MINIO_CLIENT.fput_object("data", "clean.csv", LOCAL_FILE_PATH,)
 
 
 def create_feature_engineering_pipeline(dataset_path: str):

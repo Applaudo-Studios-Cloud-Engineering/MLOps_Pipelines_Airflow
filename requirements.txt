@@ -29,6 +29,7 @@ jupyterlab-widgets
 MarkupSafe
 matplotlib-inline
 mistune
+minio
 nbclassic
 nbclient
 nbconvert
