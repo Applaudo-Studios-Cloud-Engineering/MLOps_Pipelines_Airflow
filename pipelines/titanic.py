@@ -10,6 +10,11 @@ from submodules.classification_projects.titanic_challenge.src.nodes import creat
     create_and_train_decision_tree_model, compute_accuracy, fill_empty_fare_values
 
 
+# Minio conf
+ACCESS_KEY = os.environ.get('ACCESS_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
+minio_client = Minio("minio.minio-dev.svc.cluster.local:9000", access_key=ACCESS_KEY, secret_key=SECRET_KEY, secure=False)
+
 
 def create_preprocessing_pipeline(dataset_path: str, drop_passenger_id: bool=False) -> pd.DataFrame:
     df = create_dataset(dataset_path)
@@ -25,16 +30,12 @@ def create_preprocessing_pipeline(dataset_path: str, drop_passenger_id: bool=Fal
 
     df.to_csv('/tmp/clean.csv')
 
-    LOCAL_FILE_PATH = os.environ.get('/tmp/clean.csv')
-    ACCESS_KEY = os.environ.get('ACCESS_KEY')
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-
-    MINIO_API_HOST = "http://localhost:9000"
-    MINIO_CLIENT = Minio("localhost:9000", access_key=ACCESS_KEY, secret_key=SECRET_KEY, secure=False)
-    MINIO_CLIENT.fput_object("data", "clean.csv", LOCAL_FILE_PATH,)
+    minio_client.fput_object("data", "clean.csv", "/tmp/clean.csv")
 
 
 def create_feature_engineering_pipeline(dataset_path: str):
+    minio_client.fget_object("data", "clean.csv", dataset_path)
+
     df = pd.read_csv(dataset_path)
 
     df = create_deck_feature(df, False)
@@ -63,8 +64,12 @@ def create_feature_engineering_pipeline(dataset_path: str):
 
     df.to_csv('/tmp/feature.csv')
 
+    minio_client.fput_object("data", "feature.csv", "/tmp/feature.csv")
+
 
 def create_ml_pipeline(dataset_path: str):
+    minio_client.fget_object("data", "feature.csv", dataset_path)
+
     train_df = pd.read_csv(dataset_path)
 
     X_train, Y_train = split_dataset_for_training(train_df, 'Survived')
@@ -75,10 +80,18 @@ def create_ml_pipeline(dataset_path: str):
     
     pickle.dump(model, open(f'/tmp/dt_classifier_acc', 'wb'))
 
+    minio_client.fput_object("data", "dt_classifier_acc", "/tmp/dt_classifier_acc")
+
     return training_acc
 
 
 def prepare_submission(test_df_path, clean_df_path, feature_df_path, submission_file_path):
+    minio_client.fget_object("data", "dt_classifier_acc", "/tmp/dt_classifier_acc")
+    
+    minio_client.fget_object("data", "clean.csv", "/tmp/clean.csv")
+    
+    minio_client.fget_object("data", "feature.csv", "/tmp/feature.csv")
+
     model = pickle.load(open('/tmp/dt_classifier_acc', 'rb'))
 
     create_preprocessing_pipeline(test_df_path, False)
@@ -96,5 +109,7 @@ def prepare_submission(test_df_path, clean_df_path, feature_df_path, submission_
     submission_df = pd.DataFrame(data)
 
     submission_df.to_csv(submission_file_path)
+
+    minio_client.fput_object("data", "submission.csv", submission_file_path)
 
     return submission_df

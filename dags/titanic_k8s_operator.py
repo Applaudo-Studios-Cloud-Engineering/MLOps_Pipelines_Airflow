@@ -33,6 +33,7 @@ dag = DAG(
     dagrun_timeout=timedelta(minutes=60)
 )
 
+
 create_preprocessing = KubernetesPodOperator(dag=dag, 
     task_id='create_preprocessing',
     cmds=["python3", "-c"],
@@ -46,6 +47,7 @@ create_preprocessing = KubernetesPodOperator(dag=dag,
     get_logs=True
 )
 
+
 create_feature_engineering = KubernetesPodOperator(dag=dag, 
     task_id='create_feature_engineering',
     cmds=["python3", "-c"],
@@ -54,6 +56,34 @@ create_feature_engineering = KubernetesPodOperator(dag=dag,
     namespace="default",
     image="ghcr.io/anggutie-dev/dags:latest",
     name="create-feature-engineering-pod",
+    in_cluster=True,
+    is_delete_operator_pod=True,
+    get_logs=True
+)
+
+
+create_ml = KubernetesPodOperator(dag=dag, 
+    task_id='create_ml',
+    cmds=["python3", "-c"],
+    arguments=["from pipelines.titanic import create_ml_pipeline; create_ml_pipeline('/tmp/feature.csv')"],
+    executor_config = resource_config,
+    namespace="default",
+    image="ghcr.io/anggutie-dev/dags:latest",
+    name="create-ml-pipeline-pod",
+    in_cluster=True,
+    is_delete_operator_pod=True,
+    get_logs=True
+)
+
+
+prepare_submission = KubernetesPodOperator(dag=dag, 
+    task_id='prepare_submission',
+    cmds=["python3", "-c"],
+    arguments=["from pipelines.titanic import prepare_submission_pipeline; prepare_submission_pipeline('submodules/classification_projects/titanic_challenge/data/test.csv', '/tmp/clean.csv', '/tmp/feature.csv', '/tmp/submission.csv'')"],
+    executor_config = resource_config,
+    namespace="default",
+    image="ghcr.io/anggutie-dev/dags:latest",
+    name="prepare-submission-pod",
     in_cluster=True,
     is_delete_operator_pod=True,
     get_logs=True
