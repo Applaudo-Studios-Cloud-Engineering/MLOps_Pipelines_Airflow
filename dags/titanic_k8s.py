@@ -21,7 +21,7 @@ resource_config = {
 
 
 dag = DAG(
-    dag_id="titanic-challenge-operator",
+    dag_id="titanic-challenge-kubernetes",
     schedule_interval="@daily",
     start_date=datetime(2022, 10, 1),
     catchup=False,
