@@ -1826,7 +1826,7 @@ dags:
     #    <host1>,<ip1> <key1>
     #    <host2>,<ip2> <key2>
     # interval between git sync attempts in seconds
-    wait: 60
+    wait: 10
     containerName: git-sync
     uid: 65533
 

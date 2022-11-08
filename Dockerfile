@@ -1,9 +1,9 @@
 # Latest Airflow release
-FROM apache/airflow:latest
+FROM python:latest
 
 ENV PYTHONPATH "."
 
-USER airflow
+WORKDIR /dags
 
 # required for docker approach, if using k8s comment the 2 copy instructions
 COPY --chown=airflow:root ./submodules ./submodules
