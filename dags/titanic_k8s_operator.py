@@ -42,4 +42,17 @@ create_preprocessing = KubernetesPodOperator(dag=dag,
     get_logs=True
 )
 
-create_preprocessing
+create_feature_engineering = KubernetesPodOperator(dag=dag, 
+    task_id='create_feature_engineering',
+    cmds=["python3", "-c"],
+    arguments=["from pipelines.titanic import create_feature_engineering; create_feature_engineering('/tmp/clean.csv')"],
+    executor_config = resource_config,
+    namespace="default",
+    image="ghcr.io/anggutie-dev/dags:latest",
+    name="create-feature-engineering-pod",
+    in_cluster=True,
+    is_delete_operator_pod=True,
+    get_logs=True
+)
+
+create_preprocessing >> create_feature_engineering
