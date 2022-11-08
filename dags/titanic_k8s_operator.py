@@ -25,8 +25,7 @@ secret_env = Secret('env', 'ACCESS-KEY', 'minio', 'ACCESS-KEY')
 
 
 dag = DAG(
-    dag_id="titanic-challenge-kubernetes-pod",
-    schedule_interval="@daily",
+    dag_id="titanic-challenge-kubernetes-pod"
     start_date=datetime(2022, 10, 1),
     catchup=False,
     default_args=default_args,
