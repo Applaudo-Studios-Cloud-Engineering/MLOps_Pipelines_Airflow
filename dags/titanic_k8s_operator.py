@@ -89,4 +89,4 @@ prepare_submission = KubernetesPodOperator(dag=dag,
     get_logs=True
 )
 
-create_preprocessing >> create_feature_engineering
+create_preprocessing >> create_feature_engineering >> create_ml >> prepare_submission
