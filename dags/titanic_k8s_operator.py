@@ -33,7 +33,7 @@ create_preprocessing = KubernetesPodOperator(dag=dag,
     task_id='create_preprocessing',
     cmds=["python3", "-c"],
     #arguments=["from repo.pipelines.titanic import create_preprocessing_pipeline; create_preprocessing_pipeline('dags/repo/submodules/classification_projects/titanic_challenge/data/train.csv', True)"],
-    arguments=["import os; print(os.getcwd())"]
+    arguments=["import os; print(os.getcwd())"],
     executor_config = resource_config,
     namespace="default",
     image="ghcr.io/anggutie-dev/airflow-custom:latest",
