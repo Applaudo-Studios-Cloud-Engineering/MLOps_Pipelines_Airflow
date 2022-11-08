@@ -5,11 +5,9 @@ ENV PYTHONPATH "."
 
 USER airflow
 
-#COPY --chown=airflow:root ./submodules ./submodules
-
-#COPY --chown=airflow:root ./pipelines ./pipelines
-
-#COPY ./dags/ ${AIRFLOW_HOME}/dags/
+# required for docker approach, if using k8s comment the 2 copy instructions
+COPY --chown=airflow:root ./submodules ./submodules
+COPY --chown=airflow:root ./pipelines ./pipelines
 
 COPY requirements.txt requirements.txt 
 
